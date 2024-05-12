@@ -31,7 +31,6 @@ class Interpreter:
 
 		self.__brace_map: dict[int, int] = self.__get_map()
 
-
 	def __get_map(self) -> dict[int, int]:
 
 		queue: list[int] = []
@@ -63,9 +62,9 @@ class Interpreter:
 	
 		open_index: int = self.__brace_map[self.index]
 
-		if not self.tape[open_index]:
+		if not self.tape.byte:
 			return
-	
+
 		self.index = open_index
 
 
@@ -83,8 +82,11 @@ class Interpreter:
 
 			instruction: Callable[[], None] = self.converter[self.__filtered[self.index]]
 
-			self.index += 1
+			past_index: int = self.index
 
 			instruction()
+
+			if past_index == self.index:
+				self.index += 1
 
 		return self.__output

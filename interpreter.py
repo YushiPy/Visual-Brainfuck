@@ -11,7 +11,7 @@ class Interpreter:
 		self.tape: Tape = Tape()
 
 		self.code: str = code
-		self.filtered: list[int] = [TOKEN_MAP[i] for i in self.code if i in TOKEN_MAP]
+		self.__filtered: list[int] = [TOKEN_MAP[i] for i in self.code if i in TOKEN_MAP]
 
 		self.index: int = 0
 
@@ -40,7 +40,7 @@ class Interpreter:
 		__open_brace: int = TOKEN_MAP['[']
 		__close_brace: int = TOKEN_MAP[']']
 
-		for i, a in enumerate(self.filtered):
+		for i, a in enumerate(self.__filtered):
 			
 			if a == __open_brace:
 				queue.append(i)
@@ -77,9 +77,14 @@ class Interpreter:
 		self.__output = ""
 		self.__input = [ord(i) for i in _input]
 
-		max_index: int = len(self.filtered)
+		max_index: int = len(self.__filtered)
 
 		while self.index < max_index:
-			self.converter[self.filtered[max_index]]()
+
+			instruction: Callable[[], None] = self.converter[self.__filtered[self.index]]
+
+			self.index += 1
+
+			instruction()
 
 		return self.__output

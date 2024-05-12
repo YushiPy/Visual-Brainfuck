@@ -7,7 +7,6 @@ class Tape(list[int]):
 		super().__init__([0] * size)
 
 		self.__pointer: int = 0
-
 		self.__max_index: int = 0
 
 	@property

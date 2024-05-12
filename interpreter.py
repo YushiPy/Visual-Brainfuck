@@ -31,6 +31,7 @@ class Interpreter:
 
 		self.__brace_map: dict[int, int] = self.__get_map()
 
+
 	def __get_map(self) -> dict[int, int]:
 
 		queue: list[int] = []

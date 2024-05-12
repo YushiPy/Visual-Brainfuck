@@ -8,6 +8,7 @@ class Tape(list[int]):
 
 		self.__pointer: int = 0
 
+		self.__max_index: int = 0
 
 	@property
 	def pointer(self) -> int:
@@ -21,6 +22,7 @@ class Tape(list[int]):
 			raise ValueError(f"New pointer value is negative; {value} < 0.")
 
 		self.__pointer = value
+		self.__max_index = max(value, self.__max_index)
 
 
 	@property
@@ -61,5 +63,11 @@ class Tape(list[int]):
 		
 		self.pointer = 0
 
-		for i in range(len(self)):
+		for i in range(self.__max_index):
 			self[i] = 0
+		
+		self.__max_index = 0
+
+
+	def __str__(self) -> str:
+		return str(self[:self.__max_index + 1])

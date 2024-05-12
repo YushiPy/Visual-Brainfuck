@@ -13,6 +13,8 @@ class Interpreter:
 		self.code: str = code
 		self.filtered: list[int] = [TOKEN_MAP[i] for i in self.code if i in TOKEN_MAP]
 
+		self.index: int = 0
+
 		self.converter: list[Callable[[], None]] = [
 			self.tape.shift_right,
 			self.tape.shift_left,
@@ -20,10 +22,14 @@ class Interpreter:
 			self.tape.decrease,
 			self.output,
 			self.read,
+			lambda: None, # Does nothing on open brace
+			self.go_back
 		]
 
 		self.__output: str = ""
 		self.__input: list[int] = []
+
+		self.__brace_map: dict[int, int] = self.__get_map()
 
 
 	def __get_map(self) -> dict[int, int]:
@@ -53,4 +59,12 @@ class Interpreter:
 		self.tape.byte = self.__input.pop()
 	
 
+	def go_back(self) -> None:
+	
+		open_index: int = self.__brace_map[self.index]
+
+		if not self.tape[open_index]:
+			return
+	
+		self.index = open_index
 

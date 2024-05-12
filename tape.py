@@ -31,3 +31,27 @@ class Tape(list[int]):
     @byte.setter
     def byte(self, value: int) -> None:
         self[self.pointer] = value & 0xff
+
+
+    def shift_by(self, ammount: int) -> None:
+        self.pointer += ammount
+    
+
+    def shift_right(self) -> None:
+        self.shift_by(1)
+    
+
+    def shift_left(self) -> None:
+        self.shift_by(-1)
+    
+
+    def increase_by(self, ammount: int) -> None:
+        self.byte += ammount
+    
+
+    def increase(self) -> None:
+        self.increase_by(1)
+    
+
+    def decrease(self) -> None:
+        self.increase_by(-1)

@@ -68,3 +68,18 @@ class Interpreter:
 	
 		self.index = open_index
 
+
+	def run(self, _input: str = "") -> str:
+
+		self.tape.reset()
+		self.index = 0
+
+		self.__output = ""
+		self.__input = [ord(i) for i in _input]
+
+		max_index: int = len(self.filtered)
+
+		while self.index < max_index:
+			self.converter[self.filtered[max_index]]()
+
+		return self.__output

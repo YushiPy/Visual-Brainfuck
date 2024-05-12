@@ -59,5 +59,7 @@ class Tape(list[int]):
 
 	def reset(self) -> None:
 		
+		self.pointer = 0
+
 		for i in range(len(self)):
 			self[i] = 0

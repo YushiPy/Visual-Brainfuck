@@ -55,3 +55,9 @@ class Tape(list[int]):
 
 	def decrease(self) -> None:
 		self.increase_by(-1)
+
+
+	def reset(self) -> None:
+		
+		for i in range(len(self)):
+			self[i] = 0

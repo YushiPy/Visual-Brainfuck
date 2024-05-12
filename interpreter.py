@@ -1,32 +1,35 @@
 
-from enum import Enum
+from typing import Callable
+from tape import Tape
 
-class Tokens:
-
-	RIGHT: int = 0
-	LEFT: int = 1
-	INCREASE: int = 2
-	DECREASE: int = 3
-	OUTPUT: int = 4
-	READ: int = 5
-	OPEN_WHILE: int = 6
-	CLOSE_WHILE: int = 7
-
-	TOKEN_MAP: dict[str, int] = {
-		'>': RIGHT,
-		'<': LEFT,
-		'+': INCREASE,
-		'-': DECREASE,
-		'.': OUTPUT,
-		',': READ,
-		'[': OPEN_WHILE,
-		']': CLOSE_WHILE
-	}
-
+TOKEN_MAP: dict[str, int] = {a : i for i, a in enumerate("><+-.,[]")}
 
 class Interpreter:
 
 	def __init__(self, code: str) -> None:
 		
 		self.code: str = code
-		self.filtered: list[int] = []
+		self.filtered: list[int] = [TOKEN_MAP[i] for i in self.code if i in TOKEN_MAP]
+
+		self.tape: Tape = Tape()
+
+		self.converter: list[Callable[[], None]] = [
+			self.tape.shift_right,
+			self.tape.shift_left,
+			self.tape.increase,
+			self.tape.decrease,
+			self.output,
+			self.read,
+		]
+
+		self.__output: str = ""
+		self.__input: list[int] = []
+
+
+	def output(self) -> None:
+		self.__output += chr(self.tape.byte)
+	
+
+	def read(self) -> None:
+		self.tape.byte = self.__input.pop()
+	

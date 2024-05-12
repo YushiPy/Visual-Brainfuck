@@ -79,14 +79,13 @@ class Interpreter:
 		max_index: int = len(self.__filtered)
 
 		while self.index < max_index:
-
-			instruction: Callable[[], None] = self.converter[self.__filtered[self.index]]
-
-			past_index: int = self.index
-
-			instruction()
-
-			if past_index == self.index:
-				self.index += 1
+			self.run_command()
 
 		return self.__output
+
+
+	def run_command(self) -> None:
+		
+		self.converter[self.__filtered[self.index]]()
+
+		self.index += 1

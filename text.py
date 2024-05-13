@@ -5,6 +5,27 @@ pg.init()
 
 FontInfo = tuple[str, int, bool, bool]
 
+DEFAULT_FONT: FontInfo = "ヒラキノ角コシックw0", 30, False, False
+
+__saved_fonts: dict[FontInfo, pg.font.Font] = {}
+
+def get_font(name: str | None = None, size: int | None = None, 
+			bold: bool | None = None, italic: bool | None = None) -> pg.font.Font:
+
+	info: FontInfo = (
+		name if name is not None else DEFAULT_FONT[0], 
+		size if size is not None else DEFAULT_FONT[1], 
+		bold if bold is not None else DEFAULT_FONT[2], 
+		italic if italic is not None else DEFAULT_FONT[3]
+		)
+
+	if info in __saved_fonts:
+		return __saved_fonts[info]
+
+	__saved_fonts[info] = pg.font.SysFont(*info)
+
+	return __saved_fonts[info]
+
 class Text:
 
 	string: str
@@ -14,22 +35,6 @@ class Text:
 	surface: pg.Surface
 	rect: pg.Rect
 	
-	__saved_fonts: dict[FontInfo, pg.font.Font] = {}
-
-	@staticmethod
-	def get_font(name: str = "ヒラキノ角コシックw0", size: int = 30, 
-			  bold: bool = False, italic: bool = False) -> pg.font.Font:
-
-		info: FontInfo = (name, size, bold, italic)
-
-		if info in Text.__saved_fonts:
-			return Text.__saved_fonts[info]
-
-		Text.__saved_fonts[info] = pg.font.SysFont(name, size, bold, italic)
-
-		return Text.__saved_fonts[info]
-
-	
 	def __init__(self, 
 			  string: str, 
 			  font: FontInfo | pg.font.Font, 
@@ -38,7 +43,7 @@ class Text:
 		self.string = string
 		self.color = color
 		
-		self.font = font if isinstance(font, pg.font.Font) else Text.get_font(*font)
+		self.font = font if isinstance(font, pg.font.Font) else get_font(*font)
 
 		self.surface = self.font.render(self.string, False, self.color)
 		self.rect = self.surface.get_rect()

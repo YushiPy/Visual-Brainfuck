@@ -8,7 +8,6 @@ class Interpreter:
 
 	tape: Tape
 	code: str
-	code_index: int
 
 	__filtered: list[int]
 	__reverse_map: dict[int, int]
@@ -30,7 +29,6 @@ class Interpreter:
 		self.code = code
 		self.__filtered, self.__reverse_map = self.__get_filtered()
 
-		self.code_index = 0
 		self.__filtered_index = 0
 
 
@@ -56,6 +54,11 @@ class Interpreter:
 	@property
 	def can_run(self) -> bool:
 		return self.__filtered_index < len(self.__filtered)
+
+
+	@property
+	def code_index(self) -> int:
+		return self.__reverse_map[self.__filtered_index]
 
 
 	def __get_map(self) -> dict[int, int]:

@@ -86,7 +86,11 @@ class Interpreter:
 
 
 	def set_input(self, _input: str) -> None:
-		self.__input = list(map(ord, _input))
+
+		self.__input = list(map(ord, reversed(_input)))
+
+		if self.__input[0] != 0:
+			self.__input = [0] + self.__input
 
 
 	def run(self, _input: str = "") -> str:

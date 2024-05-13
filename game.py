@@ -1,9 +1,8 @@
 
 from abc import ABC, abstractmethod
-from typing import List, Self
+from typing import Self
 
 import pygame
-from pygame.event import Event
 
 pygame.init()
 
@@ -51,6 +50,11 @@ class Game(ABC):
 
 		if self.__START_DISPLAY: 
 			Game.start_display()
+
+		self.down_keys = EventHolder()
+		self.up_keys = EventHolder()
+		self.events = EventHolder()
+		self.held_keys = EventHolder()
 
 		self.__base_surface: pygame.Surface | None = None
 		
@@ -199,7 +203,7 @@ class Game(ABC):
 
 	def __manage_events(self) -> tuple['EventHolder', 'EventHolder', 'EventHolder', 'EventHolder']:
 
-		game_events: List[Event] = pygame.event.get()
+		game_events: list[pygame.event.Event] = pygame.event.get()
 
 		self.down_keys.clear()
 		self.up_keys.clear()

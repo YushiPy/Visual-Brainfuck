@@ -85,11 +85,14 @@ class Interpreter:
 		self.index = open_index
 
 
+	def set_input(self, _input: str) -> None:
+		self.__input = list(map(ord, _input))
+
+
 	def run(self, _input: str = "") -> str:
 
 		self.reset()
-
-		self.__input = [ord(i) for i in _input]
+		self.set_input(_input)
 
 		while self.can_run:
 			self.run_command()

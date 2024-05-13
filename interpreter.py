@@ -25,8 +25,8 @@ class Interpreter:
 	def __init__(self, code: str) -> None:
 		
 		self.tape = Tape()
-
 		self.code = code
+		
 		self.__filtered, self.__reverse_map = self.__get_filtered()
 
 		self.__filtered_index = 0

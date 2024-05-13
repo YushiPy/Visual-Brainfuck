@@ -6,6 +6,10 @@ TOKEN_MAP: dict[str, int] = {a : i for i, a in enumerate("><+-.,[]")}
 
 class Interpreter:
 
+	tape: Tape
+	code: str
+	index: int
+
 	def __init__(self, code: str) -> None:
 		
 		self.tape: Tape = Tape()
@@ -15,7 +19,7 @@ class Interpreter:
 
 		self.index: int = 0
 
-		self.converter: list[Callable[[], None]] = [
+		self.__converter: list[Callable[[], None]] = [
 			self.tape.shift_right,
 			self.tape.shift_left,
 			self.tape.increase,
@@ -31,6 +35,11 @@ class Interpreter:
 
 		self.__close_map: dict[int, int] = self.__get_map()
 		self.__open_map: dict[int, int] = {b : a for a, b in self.__close_map.items()}
+
+
+	@property
+	def can_run(self) -> bool:
+		return self.index < len(self.__filtered)
 
 
 	def __get_map(self) -> dict[int, int]:
@@ -78,15 +87,11 @@ class Interpreter:
 
 	def run(self, _input: str = "") -> str:
 
-		self.tape.reset()
-		self.index = 0
+		self.reset()
 
-		self.__output = ""
 		self.__input = [ord(i) for i in _input]
 
-		max_index: int = len(self.__filtered)
-
-		while self.index < max_index:
+		while self.can_run:
 			self.run_command()
 
 		return self.__output
@@ -94,6 +99,15 @@ class Interpreter:
 
 	def run_command(self) -> None:
 		
-		self.converter[self.__filtered[self.index]]()
+		self.__converter[self.__filtered[self.index]]()
 
 		self.index += 1
+
+
+	def reset(self) -> None:
+
+		self.tape.reset()
+		self.index = 0
+
+		self.__output = ""
+		self.__input = []

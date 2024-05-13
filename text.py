@@ -3,9 +3,14 @@ import pygame as pg
 
 pg.init()
 
-FontInfo = tuple[str, int, bool, bool]
+FontInfo = \
+	tuple[()] | \
+	tuple[str | None] | \
+	tuple[str | None, int | None] | \
+	tuple[str | None, int | None, bool | None] | \
+	tuple[str | None, int | None, bool | None, bool | None]
 
-DEFAULT_FONT: FontInfo = "ヒラキノ角コシックw0", 30, False, False
+DEFAULT_FONT: FontInfo = "ヒラキノ角コシックw0", 60, False, False
 
 __saved_fonts: dict[FontInfo, pg.font.Font] = {}
 
@@ -37,7 +42,7 @@ class Text:
 	
 	def __init__(self, 
 			  string: str, 
-			  font: FontInfo | pg.font.Font, 
+			  font: FontInfo | pg.font.Font = DEFAULT_FONT, 
 			  color: tuple[int, int, int] = (255, 255, 255)) -> None:
 		
 		self.string = string

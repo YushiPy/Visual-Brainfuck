@@ -22,14 +22,15 @@ class Interpreter:
 			self.tape.decrease,
 			self.output,
 			self.read,
-			lambda: None, # Does nothing on open brace
+			self.go_foward,
 			self.go_back
 		]
 
 		self.__output: str = ""
 		self.__input: list[int] = []
 
-		self.__brace_map: dict[int, int] = self.__get_map()
+		self.__close_map: dict[int, int] = self.__get_map()
+		self.__open_map: dict[int, int] = {b : a for a, b in self.__close_map.items()}
 
 
 	def __get_map(self) -> dict[int, int]:
@@ -59,9 +60,15 @@ class Interpreter:
 		self.tape.byte = self.__input.pop()
 	
 
+	def go_foward(self) -> None:
+
+		if not self.tape.byte:
+			self.index = self.__open_map[self.index]
+
+
 	def go_back(self) -> None:
 	
-		open_index: int = self.__brace_map[self.index]
+		open_index: int = self.__close_map[self.index]
 
 		if not self.tape.byte:
 			return

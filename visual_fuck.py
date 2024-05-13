@@ -28,8 +28,10 @@ class Gameplay(Game):
 	def set_base_surface(self, surface: Surface) -> Surface | None:
 		pass
 
+
 def main() -> None:
 	print(Gameplay().run().get_info())
+
 
 if __name__ == "__main__":
 	main()

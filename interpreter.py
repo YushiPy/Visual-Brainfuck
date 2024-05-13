@@ -99,6 +99,9 @@ class Interpreter:
 
 	def run_command(self) -> None:
 		
+		if not self.can_run:
+			return
+
 		self.__converter[self.__filtered[self.index]]()
 
 		self.index += 1

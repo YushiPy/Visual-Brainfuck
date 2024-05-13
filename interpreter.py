@@ -8,18 +8,33 @@ class Interpreter:
 
 	tape: Tape
 	code: str
-	index: int
+	code_index: int
+
+	__filtered: list[int]
+	__reverse_map: dict[int, int]
+
+	__filtered_index: int
+
+	__converter: list[Callable[[], None]]
+
+	__output: str
+	__input: list[int]
+
+	__close_map: dict[int, int]
+	__open_map: dict[int, int]
 
 	def __init__(self, code: str) -> None:
 		
-		self.tape: Tape = Tape()
+		self.tape = Tape()
 
-		self.code: str = code
-		self.__filtered: list[int] = [TOKEN_MAP[i] for i in self.code if i in TOKEN_MAP]
+		self.code = code
+		self.__filtered, self.__reverse_map = self.__get_filtered()
 
-		self.index: int = 0
+		self.code_index = 0
+		self.__filtered_index = 0
 
-		self.__converter: list[Callable[[], None]] = [
+
+		self.__converter = [
 			self.tape.shift_right,
 			self.tape.shift_left,
 			self.tape.increase,
@@ -30,16 +45,17 @@ class Interpreter:
 			self.go_back
 		]
 
-		self.__output: str = ""
-		self.__input: list[int] = []
 
-		self.__close_map: dict[int, int] = self.__get_map()
-		self.__open_map: dict[int, int] = {b : a for a, b in self.__close_map.items()}
+		self.__output = ""
+		self.__input = []
+
+		self.__close_map = self.__get_map()
+		self.__open_map = {b : a for a, b in self.__close_map.items()}
 
 
 	@property
 	def can_run(self) -> bool:
-		return self.index < len(self.__filtered)
+		return self.__filtered_index < len(self.__filtered)
 
 
 	def __get_map(self) -> dict[int, int]:
@@ -61,6 +77,24 @@ class Interpreter:
 		return result
 
 
+	def __get_filtered(self) -> tuple[list[int], dict[int, int]]:
+
+		reverse: dict[int, int] = {}
+		filtered: list[int] = []
+
+		for i, a in enumerate(self.code):
+			
+			if a not in TOKEN_MAP:
+				continue
+
+			token: int = TOKEN_MAP[a]
+
+			filtered.append(token)
+			reverse[token] = i
+
+		return filtered, reverse
+
+
 	def output(self) -> None:
 		self.__output += chr(self.tape.byte)
 	
@@ -72,17 +106,17 @@ class Interpreter:
 	def go_foward(self) -> None:
 
 		if not self.tape.byte:
-			self.index = self.__open_map[self.index]
+			self.__filtered_index = self.__open_map[self.__filtered_index]
 
 
 	def go_back(self) -> None:
 	
-		open_index: int = self.__close_map[self.index]
+		open_index: int = self.__close_map[self.__filtered_index]
 
 		if not self.tape.byte:
 			return
 
-		self.index = open_index
+		self.__filtered_index = open_index
 
 
 	def set_input(self, _input: str) -> None:
@@ -109,15 +143,15 @@ class Interpreter:
 		if not self.can_run:
 			return
 
-		self.__converter[self.__filtered[self.index]]()
+		self.__converter[self.__filtered[self.__filtered_index]]()
 
-		self.index += 1
+		self.__filtered_index += 1
 
 
 	def reset(self) -> None:
 
 		self.tape.reset()
-		self.index = 0
+		self.__filtered_index = 0
 
 		self.__output = ""
 		self.__input = []
